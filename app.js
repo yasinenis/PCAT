@@ -1,23 +1,28 @@
 import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import ejs from 'ejs';
 
 const app = express();
+
+// TEMPLATE ENGINE
+app.set('view engine', 'ejs');
 
 // MIDDLEWARES
 app.use(express.static('public'));
 
-const blog = { id: 1, title: 'Blog title', description: 'Blog description' };
-
+// ROUTES
 app.get('/', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'temp/index.html'));
+  res.render('index');
+});
+
+app.get('/about', (req, res) => {
+  res.render('about');
+});
+
+app.get('/add', (req, res) => {
+  res.render('add');
 });
 
 const port = 3000;
-
 app.listen(port, () => {
   console.log(`Server started at ${port} port..`);
 });
