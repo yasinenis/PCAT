@@ -13,6 +13,8 @@
 
 > show collections
 
+> db.createCollection("collection-name")
+
 > db.photos.insertMany([
 ... {title: "Photo 2", desription: "Photo 2 description", qty:50},
 ... {title: "Photo 3", desription: "Photo 3 description", qty:150},
