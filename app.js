@@ -1,7 +1,16 @@
 import express from 'express';
+
 import ejs from 'ejs';
 
+import Photo from './models/Photo.js';
+
+import mongoose from 'mongoose';
+
 const app = express();
+
+// connect DB
+await mongoose.connect('mongodb://localhost/pcat-test-db');
+console.log('Database connected succesfully.');
 
 // TEMPLATE ENGINE
 app.set('view engine', 'ejs');
@@ -9,9 +18,13 @@ app.set('view engine', 'ejs');
 // MIDDLEWARES
 app.use(express.static('public'));
 
+app.use(express.urlencoded({ extended: true })); // helps us to read data in url
+app.use(express.json()); // converts url data to json
+
 // ROUTES
-app.get('/', (req, res) => {
-  res.render('index');
+app.get('/', async (req, res) => {
+  const photos = await Photo.find({});
+  res.render('index', { photos });
 });
 
 app.get('/about', (req, res) => {
@@ -20,6 +33,11 @@ app.get('/about', (req, res) => {
 
 app.get('/add', (req, res) => {
   res.render('add');
+});
+
+app.post('/photos', async (req, res) => {
+  await Photo.create(req.body);
+  res.redirect('/');
 });
 
 const port = 3000;
