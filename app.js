@@ -1,10 +1,13 @@
 import express from 'express';
+import mongoose from 'mongoose';
+
+import fileUpload from 'express-fileupload';
+import methodOverride from 'method-override';
 
 import ejs from 'ejs';
 
-import Photo from './models/Photo.js';
-
-import mongoose from 'mongoose';
+import * as photoController from './controllers/photoControllers.js';
+import * as pageController from './controllers/pageControllers.js';
 
 const app = express();
 
@@ -21,31 +24,24 @@ app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true })); // helps us to read data in url
 app.use(express.json()); // converts url data to json
 
+app.use(fileUpload());
+
+app.use(
+  methodOverride('_method', {
+    methods: ['POST', 'GET'],
+  })
+);
+
 // ROUTES
-app.get('/', async (req, res) => {
-  const photos = await Photo.find({});
-  res.render('index', { photos });
-});
+app.get('/', photoController.getAllPhotos);
+app.get('/photos/:id', photoController.getPhoto);
+app.post('/photos', photoController.createPhoto);
+app.put('/photos/:id', photoController.updatePhoto);
+app.delete('/photos/:id', photoController.deletePhoto);
 
-app.get('/photos/:id', async (req, res) => {
-  // console.log(req.params.id);      // for catch id in console
-  //res.render('about');
-  const photo = await Photo.findById(req.params.id);
-  res.render('photo', { photo });
-});
-
-app.get('/about', (req, res) => {
-  res.render('about');
-});
-
-app.get('/add', (req, res) => {
-  res.render('add');
-});
-
-app.post('/photos', async (req, res) => {
-  await Photo.create(req.body);
-  res.redirect('/');
-});
+app.get('/about', pageController.getAboutPage);
+app.get('/add', pageController.getAddPage);
+app.get('/photos/edit/:id', pageController.getEditPage);
 
 const port = 3000;
 app.listen(port, () => {
