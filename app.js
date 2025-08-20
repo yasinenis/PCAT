@@ -12,7 +12,16 @@ import * as pageController from './controllers/pageControllers.js';
 const app = express();
 
 // connect DB
-await mongoose.connect('mongodb://localhost/pcat-test-db');
+await mongoose
+  .connect(
+    'mongodb+srv://yasinenis201:57rLxAWiJWgonMS1@cluster0.rqocgnx.mongodb.net/?retryWrites=true&w=majority&appName=pcat-db'
+  )
+  .then(() => {
+    console.log('DB CONNECTED!');
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 console.log('Database connected succesfully.');
 
 // TEMPLATE ENGINE
@@ -43,7 +52,7 @@ app.get('/about', pageController.getAboutPage);
 app.get('/add', pageController.getAddPage);
 app.get('/photos/edit/:id', pageController.getEditPage);
 
-const port = 3000;
+const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`Server started at ${port} port..`);
 });
