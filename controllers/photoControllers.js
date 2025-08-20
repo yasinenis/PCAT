@@ -8,8 +8,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export async function getAllPhotos(req, res) {
-  const photos = await Photo.find({}).sort('-dateCreated');
-  res.render('index', { photos });
+  const page = req.query.page || 1;
+  const photosPerPage = 6;
+  const totalPhotos = await Photo.find().countDocuments();
+  const photos = await Photo.find({})
+    .sort('-dateCreated')
+    .skip((page - 1) * photosPerPage)
+    .limit(photosPerPage);
+  res.render('index', {
+    photos: photos,
+    current: page,
+    pages: Math.ceil(totalPhotos / photosPerPage),
+  });
 }
 
 export async function getPhoto(req, res) {
