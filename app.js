@@ -13,9 +13,7 @@ const app = express();
 
 // connect DB
 await mongoose
-  .connect(
-    'mongodb+srv://yasinenis201:57rLxAWiJWgonMS1@cluster0.rqocgnx.mongodb.net/?retryWrites=true&w=majority&appName=pcat-db'
-  )
+  .connect(process.env.MONGODB_URL)
   .then(() => {
     console.log('DB CONNECTED!');
   })
